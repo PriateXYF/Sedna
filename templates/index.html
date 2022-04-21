@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<!--
+	Landed by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Checkin - virts.app</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/static/css/main.css" />
+		<noscript><link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
+	</head>
+  <style type="text/css">
+    .config-a{
+      border-bottom: none !important;
+    }
+    .date-td{
+      min-width: 130px;
+    }
+    .name-td{
+      min-width: 120px;
+    }
+  </style>
+	<body class="is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header">
+					<h1 id="logo"><a href="/">首页</a></h1>
+					<nav id="nav">
+						<ul>
+							<li><a href="https://sedna.virts.app/" class="button primary">README</a></li>
+						</ul>
+					</nav>
+				</header>
+
+			<!-- Main -->
+				<div id="main" class="wrapper style1">
+					<div class="container">
+						<header class="major">
+							<h2>Virts签到网</h2>
+							<!-- <p>aaa</p> -->
+						</header>
+            <!-- Form -->
+              <section>
+                <form method="post">
+                  <div class="row gtr-uniform gtr-50">
+                    <div class="col-12">
+                      <input type="text" name="name" id="name" value="" placeholder="Name" />
+                    </div>
+                    <div class="col-4 col-12-medium">
+                      <input type="radio" id="limit-low" value="30" name="limit" checked>
+                      <label for="limit-low">30</label>
+                    </div>
+                    <div class="col-4 col-12-medium">
+                      <input type="radio" id="limit-normal" value="60" name="limit">
+                      <label for="limit-normal">60</label>
+                    </div>
+                    <div class="col-4 col-12-medium">
+                      <input type="radio" id="limit-high" value="90" name="limit">
+                      <label for="limit-high">90</label>
+                    </div>
+                  </div>
+                </form>
+              </section>
+
+						<!-- Table -->
+							<section>
+								<h3>签到历史</h3>
+								<div class="table-wrapper">
+									<table class="alt">
+										<thead>
+											<tr>
+												<th>名称</th>
+                        <th>状态</th>
+												<th>日期</th>
+                        <th>描述</th>
+											</tr>
+										</thead>
+										<tbody id='data'>
+                      {% for item in data %}
+                      <tr>
+                        <td class="name-td"><a href="{{ item['url'] }}" target="_blank">{{ item['name'] }}</a></td>
+                        <td>
+                          <a class="config-a" href="config?id={{ item['id'] }}" target="_blank">
+                            <b class="status">{{ item['status'] }}</b>
+                          </a>
+                        </td>
+                        <td class="date-td">{{ item['date'] }}</td>
+                        <td>{{ item['content'][:200] }}</td>
+                      </tr>
+                      {% endfor %}
+										</tbody>
+									</table>
+								</div>
+							</section>
+					</div>
+				</div>
+
+			<!-- Footer -->
+				<footer id="footer">
+					<ul class="copyright">
+						<li>&copy; Virts. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</footer>
+
+		</div>
+
+			<script src="/static/js/jquery.min.js"></script>
+			<script src="/static/js/jquery.scrolly.min.js"></script>
+			<script src="/static/js/jquery.dropotron.min.js"></script>
+			<script src="/static/js/jquery.scrollex.min.js"></script>
+			<script src="/static/js/browser.min.js"></script>
+			<script src="/static/js/breakpoints.min.js"></script>
+			<script src="/static/js/util.js"></script>
+			<script src="/static/js/main.js"></script>
+      <script type="text/javascript">
+        function htmlEncode(value){
+            if (value) {
+                return jQuery('<div>').text(value).html();
+            } else {
+                return '';
+            }
+        }
+        function checkStatus(){
+          $('.status:contains("success")').css("color","#33ff00")
+          $('.status:contains("failure")').css("color","#ff0000")
+          $('.status:contains("repete")').css("color","#ff6600")
+          $('.status:contains("error")').css("color","#ccff00")
+        }
+        function query(){
+          const keyword = $('#name').val()
+          const limit = parseInt($("input[name='limit']:checked").val())
+          $('#data').empty()
+          $.ajax({
+            url: '/query',
+            type: 'POST',
+            // dataType: 'default: Intelligent Guess (Other values: xml, json, script, or html)',
+            data: {keyword, limit},
+          }).done(function(data) {
+            console.log(data)
+            data.forEach((item)=>{
+              $('#data').append(`<tr>
+                                  <td class="name-td"><a href="${item['url']}" target="_blank">${item['name']}</a></td>
+                                  <td><b class='status'>${item['status']}</b></td>
+                                  <td class="date-td">${item['date']}</td>
+                                  <td>${htmlEncode(item['content']).substr(0,200)}</td>
+                                </tr>
+                `)
+            })
+            checkStatus()
+          })
+        }
+        $("form").submit(function(e){
+          e.preventDefault()
+          query()
+        })
+        $('input[type=radio][name=limit]').change(function() {
+          query()
+        })
+        checkStatus()
+      </script>
+
+	</body>
+</html>

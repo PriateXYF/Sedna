@@ -1,0 +1,164 @@
+
+
+<!DOCTYPE HTML>
+<!--
+	Landed by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Checkin - virts.app</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/static/css/main.css" />
+		<noscript><link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
+	</head>
+	<style type="text/css">
+    .config-a{
+      border-bottom: none !important;
+    }
+    .date-td{
+      min-width: 130px;
+    }
+    .name-td{
+      min-width: 120px;
+    }
+  </style>
+	<body class="is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header">
+					<h1 id="logo"><a href="/">首页</a></h1>
+					<nav id="nav">
+						<ul>
+							<li><a href="https://sedna.virts.app/" class="button primary">README</a></li>
+						</ul>
+					</nav>
+				</header>
+
+			<!-- Main -->
+				<div id="main" class="wrapper style1">
+					<div class="container">
+						<header class="major">
+							<h2 id="host"></h2>
+							<!-- <p>模板介绍</p> -->
+						</header>
+
+						<!-- Text -->
+							<section>
+								<!-- <h3>说明</h3>
+								<p>使用时请自行抓包修改cookie和其他必要参数，已用 <strong style="color: #ff3333">{§§§}</strong> 标注。</p>
+								<hr /> -->
+
+								<header>
+									<h3>当前配置</h3>
+								</header>
+								<pre><code></code></pre>
+							</section>
+							<section>
+								<form>
+								<div class="row gtr-uniform gtr-50">
+									<div class="col-12">
+										<ul class="actions">
+											<li><input id="submitbtn" type="button" value="签到" class="primary" /></li>
+											<li><input type="button" value="修改" /></li>
+										</ul>
+									</div>
+								</div>
+								</form>
+							</section>
+							<section>
+								<h3>签到结果</h3>
+								<div class="table-wrapper">
+									<table>
+										<thead>
+											<tr>
+												<th>名称</th>
+												<th>状态</th>
+												<th>日期</th>
+                        						<th>描述</th>
+											</tr>
+										</thead>
+										<tbody id="data">
+										</tbody>
+									</table>
+								</div>
+							</section>
+					</div>
+				</div>
+
+			<!-- Footer -->
+				<footer id="footer">
+					<ul class="copyright">
+						<li>&copy; Virts. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</footer>
+
+		</div>
+
+		<!-- Scripts -->
+			<script src="/static/js/jquery.min.js"></script>
+			<script src="/static/js/jquery.scrolly.min.js"></script>
+			<script src="/static/js/jquery.dropotron.min.js"></script>
+			<script src="/static/js/jquery.scrollex.min.js"></script>
+			<script src="/static/js/browser.min.js"></script>
+			<script src="/static/js/breakpoints.min.js"></script>
+			<script src="/static/js/util.js"></script>
+			<script src="/static/js/main.js"></script>
+			<script src="/static/js/bignumber.min.js"></script>
+			<script src="/static/js/jquery.json.js"></script>
+			<script type="text/javascript">
+				// const newJSON = new JSONFormat($('code').html(), 4).toString();
+				// $('code').html(newJSON)
+				const id = new URL(location.toString()).searchParams.get('id')
+				$.ajax({
+		            url: '/config',
+		            type: 'POST',
+		            data: {id},
+          		}).done(function(data) {
+          			let json = JSON.stringify(data.config, undefined, 4);
+        			json = new JSONFormat(json, 4).toString();
+        			$("code").html(json);
+        			$("#host").text(data.host)
+          		})
+		        function checkStatus(){
+		          $('.status:contains("success")').css("color","#33ff00")
+		          $('.status:contains("failure")').css("color","#ff0000")
+		          $('.status:contains("repete")').css("color","#ff6600")
+		          $('.status:contains("error")').css("color","#ccff00")
+		        }
+		        function htmlEncode(value){
+		            if (value) {
+		                return jQuery('<div>').text(value).html();
+		            } else {
+		                return '';
+		            }
+		        }
+		        $("#submitbtn").click(function(e){
+					$(this).attr('disabled', 'disabled')
+		          	e.preventDefault()
+		          	checkin()
+		        })
+          		function checkin(){
+					$.ajax({
+						url: 'checkin',
+						type: 'POST',
+						data: {id},
+					}).done(function(data) {
+						$("#submitbtn").removeAttr('disabled')
+						$('#data').prepend(`
+							<tr>
+                                <td class="name-td"><a>${data['name']}</a></td>
+                                <td class='status'>${data['status']}</td>
+                                <td class="date-td">${data['date']}</td>
+                                <td>${htmlEncode(data['msg']).substr(0,200)}</td>
+                            </tr>
+                		`)
+                		checkStatus()
+					})
+				}
+			</script>
+	</body>
+</html>
