@@ -144,7 +144,11 @@
             data.forEach((item)=>{
               $('#data').append(`<tr>
                                   <td class="name-td"><a href="${item['url']}" target="_blank">${item['name']}</a></td>
-                                  <td><b class='status'>${item['status']}</b></td>
+                                  <td>
+                                    <a class="config-a" href="config?id=${item['id']}" target="_blank">
+                                      <b class='status'>${item['status']}</b>
+                                    </a>
+                                  </td>
                                   <td class="date-td">${item['date']}</td>
                                   <td>${htmlEncode(item['content']).substr(0,200)}</td>
                                 </tr>
