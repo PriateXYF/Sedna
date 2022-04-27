@@ -24,6 +24,7 @@ LEANCLOUD_APP_MASTER_KEY=xxxxxx
 LEANCLOUD_APP_PORT=80
 LEANCLOUD_APP_ENV=development
 WEB_PASSWORD=123456
+BARK_URL=https://api.day.app/yourkey/
 ```
 
 * 安装依赖
