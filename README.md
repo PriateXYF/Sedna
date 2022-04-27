@@ -18,7 +18,6 @@ git clone 'https://github.com/PriateXYF/Sedna.git' && cd Sedna && touch .env
 * 编辑 `.env` 文件
 
 ```bash
-# .env
 LEANCLOUD_APP_ID=xxxxxx
 LEANCLOUD_APP_KEY=xxxxxx
 LEANCLOUD_APP_MASTER_KEY=xxxxxx

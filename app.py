@@ -101,7 +101,7 @@ def before():
 	suffix = url.endswith('.png') or url.endswith('.jpg') or url.endswith('.css') or url.endswith('.js')
 	if url in pass_list or suffix:
 		pass
-	elif session.get('is_login', '') != 'true':
-		return redirect('/login')
-	else:
-		pass
+	# elif session.get('is_login', '') != 'true':
+	# 	return redirect('/login')
+	# else:
+	# 	pass

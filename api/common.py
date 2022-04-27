@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 import pytz as pytz
 import re
+from .notice import bark
 
 
 def get_config(id):
@@ -41,6 +42,9 @@ def common_checkin(id):
             break
     if not status:
         status = "error"
+    if config['isNotification'] and (status != 'success') :
+        bark(f"{config['name']} 签到失败",f"状态 : {status} \n内容 : {content[:100]}")
+
     Log = leancloud.Object.extend('Log')
     log = Log()
     log.set('name', config['name'])
