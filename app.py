@@ -4,7 +4,7 @@ import os
 import datetime
 
 import leancloud
-from flask import Flask, jsonify, request, session, redirect
+from flask import Flask, jsonify, request, redirect, make_response
 from flask import render_template
 from flask_sockets import Sockets
 from leancloud import LeanCloudError
@@ -14,9 +14,6 @@ from api.common import get_config
 import json
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=20)
 
 sockets = Sockets(app)
 
@@ -89,8 +86,11 @@ def login():
 	if 'WEB_PASSWORD' in os.environ:
 		key = os.environ['WEB_PASSWORD']
 	if password == key:
-		session['is_login'] = 'true'
-		return redirect('/')
+		outdate=datetime.datetime.today() + datetime.timedelta(days=30)  
+		resp = make_response(redirect('/'))
+		resp.set_cookie('token', password, expires=outdate) 
+		return resp
+		
 	else:
 		return render_template('error.html')
 
@@ -99,9 +99,10 @@ def before():
 	url = request.path
 	pass_list = ['/login']
 	suffix = url.endswith('.png') or url.endswith('.jpg') or url.endswith('.css') or url.endswith('.js')
+	token = request.cookies.get("token")
 	if url in pass_list or suffix:
 		pass
-	elif session.get('is_login', '') != 'true':
+	elif token != os.environ['WEB_PASSWORD']:
 		return redirect('/login')
 	else:
 		pass
